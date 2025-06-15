@@ -33,4 +33,4 @@
 curl -fsSL https://raw.githubusercontent.com/shadowNo-1/linux-init-script/main/linux-init-script.sh | bash
 ```
 
-##‼️别用！还没写完‼️
+# ‼️别用！还没写完‼️
