@@ -3,7 +3,7 @@
 
 ## 功能
 
-- 自动识别系统发行版  
+- 自动检测并识别 Linux 发行版  
 - 安装常用基础工具（sudo、curl、wget、vim、htop 等）  
 - 交互式时区设置，支持常用时区快速选择或自定义输入  
 - 设置默认编辑器为 vim  
@@ -11,12 +11,13 @@
 
 ## 支持的系统
 
-- Debian  
-- Ubuntu  
-- Kali Linux  
-- Deepin  
-- Raspbian / Raspberry Pi OS  
-- 其他基于 Debian 的发行版（自动尝试通用设置）
+- 绝大多数基于 Linux 的发行版，包括但不限于：  
+  - Debian 系列  
+  - Ubuntu 系列  
+  - Kali Linux  
+  - Deepin  
+  - Raspbian / Raspberry Pi OS  
+  - 其他主流和定制 Linux 发行版
 
 ## 使用方法
 
