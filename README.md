@@ -2,8 +2,9 @@
 [![Author](https://img.shields.io/badge/author-shadowNo--1-informational?style=flat&logo=github&logoColor=181717&color=green)](https://github.com/shadowNo-1)
 [![](https://img.shields.io/badge/license-GNU--v3.0-informational?style=flat&logo=gnu&logoColor=white&color=A42E2B)](https://www.gnu.org/licenses/gpl-3.0.html)
 ![](https://img.shields.io/badge/Version-v0.1--alpha-&logoColor=e95420&color=e95420)
-一键初始化多发行版 Linux 系统的环境配置脚本，支持 Debian、Ubuntu、Kali、Deepin、Raspbian 等主流发行版。（完善中）
 
+一键初始化多发行版 Linux 系统的环境配置脚本，支持 Debian、Ubuntu、Kali、Deepin、Raspbian 等主流发行版。（完善中）
+简称LQI
 
 ## 功能
 
