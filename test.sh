@@ -33,7 +33,7 @@ EOF
 )
 
 echo "$ascii_art"
-printf "              ${GREEN}Version: v0.1-alpha${NC}\n\n"
+printf "              ${GREEN}Version: v0.2-alpha${NC}\n\n"
 
 # ==============================
 # 检查 root
