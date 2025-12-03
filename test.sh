@@ -16,6 +16,11 @@ LOGFILE="/var/log/linux-init.log"
 exec > >(tee -a "$LOGFILE") 2>&1
 
 # ==============================
+# 当前脚本版本
+# ==============================
+SCRIPT_VERSION="v0.2-alpha"
+
+# ==============================
 # ASCII 签名
 # ==============================
 ascii_art=$(cat << 'EOF'
@@ -33,7 +38,35 @@ EOF
 )
 
 echo "$ascii_art"
-printf "              ${GREEN}Version: v0.2-alpha${NC}\n\n"
+printf "              ${GREEN}Version: $SCRIPT_VERSION${NC}\n\n"
+
+# ==============================
+# 检查脚本最新版本
+# ==============================
+check_update() {
+    # GitHub 原始文件地址（raw）
+    REMOTE_VERSION_URL="https://raw.githubusercontent.com/shadowNo-1/linux-init-script/main/version.txt"
+
+    if command -v curl &>/dev/null; then
+        echo "🔍 检查最新脚本版本..."
+        LATEST_VERSION=$(curl -fsSL "$REMOTE_VERSION_URL" || echo "")
+        if [ -n "$LATEST_VERSION" ]; then
+            if [ "$LATEST_VERSION" != "$SCRIPT_VERSION" ]; then
+                echo -e "${YELLOW}⚠️ 有新版本可用：$LATEST_VERSION（当前版本：$SCRIPT_VERSION）${NC}"
+                echo "请访问 GitHub 更新脚本：https://github.com/shadowNo-1/linux-init-script"
+            else
+                echo -e "${GREEN}✅ 当前已是最新版本${NC}"
+            fi
+        else
+            echo -e "${YELLOW}⚠️ 无法获取远程版本信息${NC}"
+        fi
+    else
+        echo -e "${YELLOW}⚠️ curl 未安装，无法检测更新${NC}"
+    fi
+}
+
+# 调用版本检测
+check_update
 
 # ==============================
 # 检查 root
