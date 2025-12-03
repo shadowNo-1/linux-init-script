@@ -21,6 +21,12 @@ exec > >(tee -a "$LOGFILE") 2>&1
 SCRIPT_VERSION="v0.3-alpha"
 
 # ==============================
+# GitHub 仓库信息
+# ==============================
+REPO_USER="shadowNo-1"
+REPO_NAME="linux-init-script"
+
+# ==============================
 # ASCII 签名
 # ==============================
 ascii_art=$(cat << 'EOF'
@@ -44,9 +50,6 @@ printf "              ${GREEN}Version: $SCRIPT_VERSION${NC}\n\n"
 # 检查 GitHub Release 最新版本
 # ==============================
 check_update() {
-    REPO_USER="shadowNo-1"
-    REPO_NAME="linux-init-script"
-
     if command -v curl &>/dev/null; then
         echo "🔍 检查最新脚本版本..."
         LATEST_VERSION=$(curl -fsSL "https://api.github.com/repos/$REPO_USER/$REPO_NAME/releases/latest" \
@@ -55,16 +58,63 @@ check_update() {
         if [ -n "$LATEST_VERSION" ]; then
             if [ "$LATEST_VERSION" != "$SCRIPT_VERSION" ]; then
                 echo -e "${YELLOW}⚠️ 有新版本可用：$LATEST_VERSION（当前版本：$SCRIPT_VERSION）${NC}"
-                echo "请访问 GitHub 更新脚本：https://github.com/$REPO_USER/$REPO_NAME/releases/latest"
+                UPDATE_AVAILABLE=1
             else
                 echo -e "${GREEN}✅ 当前已是最新版本${NC}"
+                UPDATE_AVAILABLE=0
             fi
         else
             echo -e "${YELLOW}⚠️ 无法获取远程版本信息${NC}"
+            UPDATE_AVAILABLE=0
         fi
     else
         echo -e "${YELLOW}⚠️ curl 未安装，无法检测更新${NC}"
+        UPDATE_AVAILABLE=0
     fi
+}
+
+# ==============================
+# 一键更新脚本
+# ==============================
+update_script() {
+    if [ "$UPDATE_AVAILABLE" != "1" ]; then
+        echo -e "${GREEN}✅ 当前已是最新版本，无需更新${NC}"
+        return
+    fi
+
+    if ! command -v curl &>/dev/null; then
+        echo -e "${RED}❌ curl 未安装，无法更新${NC}"
+        return
+    fi
+
+    echo "⬇️ 正在下载最新脚本..."
+    TMP_FILE=$(mktemp)
+    DOWNLOAD_URL=$(curl -fsSL "https://api.github.com/repos/$REPO_USER/$REPO_NAME/releases/latest" \
+        | grep '"browser_download_url":' | grep '\.sh"' | head -n1 | sed -E 's/.*"([^"]+)".*/\1/')
+
+    if [ -z "$DOWNLOAD_URL" ]; then
+        echo -e "${RED}❌ 未找到可下载脚本${NC}"
+        return
+    fi
+
+    curl -fsSL "$DOWNLOAD_URL" -o "$TMP_FILE"
+    if [ ! -f "$TMP_FILE" ]; then
+        echo -e "${RED}❌ 下载失败${NC}"
+        return
+    fi
+
+    SCRIPT_PATH="$(realpath "$0")"
+    BACKUP_PATH="${SCRIPT_PATH}.bak.$(date +%Y%m%d%H%M%S)"
+    echo "💾 备份当前脚本到 $BACKUP_PATH"
+    cp "$SCRIPT_PATH" "$BACKUP_PATH"
+
+    echo "⚡ 替换为最新版本..."
+    cp "$TMP_FILE" "$SCRIPT_PATH"
+    chmod +x "$SCRIPT_PATH"
+    rm -f "$TMP_FILE"
+
+    echo -e "${GREEN}✅ 更新完成，请重新运行脚本${NC}"
+    exit 0
 }
 
 # 调用版本检测
@@ -182,7 +232,8 @@ while true; do
     echo "2) 设置时区"
     echo "3) 设置默认编辑器为 vim"
     echo "4) 检查 sudo 权限"
-    echo "5) 退出"
+    echo "5) 一键更新脚本"
+    echo "6) 退出"
     
     read -rp "输入编号: " CHOICE < /dev/tty
 
@@ -191,7 +242,8 @@ while true; do
         2) set_timezone ;;
         3) set_default_editor ;;
         4) check_sudo ;;
-        5) echo "👋 退出脚本" ; exit 0 ;;
+        5) update_script ;;
+        6) echo "👋 退出脚本" ; exit 0 ;;
         *) echo -e "${YELLOW}⚠️ 无效选项，请重新选择${NC}" ;;
     esac
 done
